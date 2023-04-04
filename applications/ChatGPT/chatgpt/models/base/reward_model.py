@@ -35,7 +35,8 @@ class RewardModel(LoRAModule):
 
     def forward(self, sequences: torch.LongTensor, attention_mask: Optional[torch.Tensor] = None) -> torch.Tensor:
         outputs = self.model(sequences, attention_mask=attention_mask)
-        last_hidden_states = outputs['last_hidden_state']
+        last_hidden_states = outputs['last_hidden_state']    # (B, seq_len, dim)
+        # 需要看padding方式，如果是left padding就是不取最后的EOS，如果是right padding就没有意义
         values = self.value_head(last_hidden_states)[:, :-1]
         value = values.mean(dim=1).squeeze(1)    # ensure shape is (B)
         return value
