@@ -50,7 +50,7 @@ def main(args):
     else:
         raise ValueError(f'Unsupported actor model "{args.model}"')
 
-    if args.rm_model == None:
+    if args.rm_model is None:
         rm_model_name = args.model
     else:
         rm_model_name = args.rm_model

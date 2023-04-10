@@ -33,10 +33,10 @@ class PPOTrainer(Trainer):
         buffer_cpu_offload (bool, defaults to True): whether to offload replay buffer to cpu
         eps_clip (float, defaults to 0.2): the clip coefficient of policy loss
         value_clip (float, defaults to 0.4): the clip coefficient of value loss
-        experience_batch_size (int, defaults to 8): the batch size to use for experience generation
+        experience_batch_size (int, defaults to 8): the batch size to use for experience generation  # todo
         max_epochs (int, defaults to 1): the number of epochs of training process
         tokenier (Callable, optional): the tokenizer to use for tokenizing the input
-        sample_replay_buffer (bool, defaults to False): whether to sample from replay buffer
+        sample_replay_buffer (bool, defaults to False): whether to sample from replay buffer  # todo
         dataloader_pin_memory (bool, defaults to True): whether to pin memory for data loader
         callbacks (List[Callback], defaults to []): the callbacks to call during training process
         generate_kwargs (dict, optional): the kwargs to use while model generating
@@ -74,7 +74,7 @@ class PPOTrainer(Trainer):
 
         self.actor_loss_fn = PolicyLoss(eps_clip)
         self.critic_loss_fn = ValueLoss(value_clip)
-        self.ptx_loss_fn = nn.CrossEntropyLoss(ignore_index=-100)
+        self.ptx_loss_fn = nn.CrossEntropyLoss(ignore_index=-100)    # todo: why not PPOPtxActorLoss in loss.py
         self.ptx_coef = ptx_coef
         self.actor_optim = actor_optim
         self.critic_optim = critic_optim
