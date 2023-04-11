@@ -79,6 +79,7 @@ class RewardModelTrainer(ABC):
                     if chosen_reward[i] > reject_reward[i]:
                         on += 1
                 dist += (chosen_reward - reject_reward).mean().item()
+                print("cnt:{}, on:{}".format(cnt, on))
             dist_mean = dist / len(dataloader)
             acc = on / cnt
         self.model.train()
@@ -108,6 +109,7 @@ class RewardModelTrainer(ABC):
                 self.strategy.optimizer_step(self.optimizer)
                 self.optimizer.zero_grad()
                 cnt += 1
+                step_bar.update()
                 if cnt == 100:
                     self.scheduler.step()
                     dist, acc = self.eval_acc(self.valid_dataloader)
@@ -116,7 +118,6 @@ class RewardModelTrainer(ABC):
                         log = pd.DataFrame([[step_bar.n, loss.item(), dist, acc]],
                                            columns=['step', 'loss', 'dist', 'acc'])
                         log.to_csv('log_%s.csv' % time, mode='a', header=False, index=False)
-                step_bar.update()
                 step_bar.set_postfix({'dist': dist, 'acc': acc})
 
             # eval

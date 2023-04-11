@@ -41,12 +41,15 @@ class NaiveStrategy(Strategy):
                           pin_memory=pin_memory,
                           collate_fn=replay_buffer.collate_fn)
 
-    def save_model(self, model: nn.Module, path: str, only_rank0: bool = False, tokenizer: Optional[PreTrainedTokenizerBase] = None) -> None:
+    def save_model(self,
+                   model: nn.Module,
+                   path: str,
+                   only_rank0: bool = False,
+                   tokenizer: Optional[PreTrainedTokenizerBase] = None) -> None:
         for module in model.modules():
             if isinstance(module, LoraLinear):
                 module.merge_weights = True
                 module.eval()
-        
         if isinstance(model, RewardModel):
             state_dict = model.state_dict()
             torch.save(state_dict, path)
