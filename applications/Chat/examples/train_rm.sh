@@ -16,19 +16,19 @@ set_n_least_used_CUDA_VISIBLE_DEVICES() {
 set_n_least_used_CUDA_VISIBLE_DEVICES 1
 
 # single GPU, deberta
-# python train_reward_model.py --pretrain 'microsoft/deberta-v3-large' \
-#                              --model 'deberta' \
-#                              --strategy naive \
-#                              --loss_fn 'log_exp'\
-#                              --save_path 'rmstatic.pt' \
-#                              --test False
-
-torchrun --standalone --nproc_per_node=1 train_reward_model.py --pretrain 'microsoft/deberta-v3-large' \
+python train_reward_model.py --pretrain 'microsoft/deberta-v3-large' \
                              --model 'deberta' \
-                             --strategy colossalai_gemini \
+                             --strategy naive \
                              --loss_fn 'log_exp'\
                              --save_path 'rmstatic.pt' \
-                             --test True
+                             --test False
+
+# torchrun --standalone --nproc_per_node=1 train_reward_model.py --pretrain 'microsoft/deberta-v3-large' \
+#                              --model 'deberta' \
+#                              --strategy colossalai_gemini \
+#                              --loss_fn 'log_exp'\
+#                              --save_path 'rmstatic.pt' \
+#                              --test True
 
 # multiple GPU
 # torchrun --standalone --nproc_per_node=4 train_reward_model.py --pretrain 'bigscience/bloomz-7b1' \
