@@ -79,9 +79,10 @@ class RewardModelTrainer(ABC):
                     if chosen_reward[i] > reject_reward[i]:
                         on += 1
                 dist += (chosen_reward - reject_reward).mean().item()
-                print("cnt:{}, on:{}".format(cnt, on))
+                # print("cnt:{}, on:{}".format(cnt, on))
             dist_mean = dist / len(dataloader)
             acc = on / cnt
+            print("dist:{}, on:{}/cnt:{}".format(dist, on, cnt))
         self.model.train()
         return dist_mean, acc
 
@@ -97,17 +98,17 @@ class RewardModelTrainer(ABC):
             cnt = 0
             acc = 0
             dist = 0
-            for chosen_ids, c_mask, reject_ids, r_mask in self.train_dataloader:
+            for chosen_ids, c_mask, reject_ids, r_mask in self.train_dataloader:    # shape: (B, 1, 512)
                 chosen_ids = chosen_ids.squeeze(1).to(torch.cuda.current_device())
                 c_mask = c_mask.squeeze(1).to(torch.cuda.current_device())
                 reject_ids = reject_ids.squeeze(1).to(torch.cuda.current_device())
                 r_mask = r_mask.squeeze(1).to(torch.cuda.current_device())
+                self.optimizer.zero_grad()    # TODO: zero_grad position
                 chosen_reward = self.model(chosen_ids, attention_mask=c_mask)
                 reject_reward = self.model(reject_ids, attention_mask=r_mask)
                 loss = self.loss_fn(chosen_reward, reject_reward)
                 self.strategy.backward(loss, self.model, self.optimizer)
                 self.strategy.optimizer_step(self.optimizer)
-                self.optimizer.zero_grad()
                 cnt += 1
                 step_bar.update()
                 if cnt == 100:
