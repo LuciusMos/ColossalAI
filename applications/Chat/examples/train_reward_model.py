@@ -57,7 +57,7 @@ def train(args):
             state_dict = torch.load(args.model_path)
             model.load_state_dict(state_dict)
 
-    # model = model.to(torch.float16)
+    model = model.to(torch.float16)    # comment this line would help with reward_model training
 
     # configure tokenizer
     if args.model == 'gpt2':

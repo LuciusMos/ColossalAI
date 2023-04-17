@@ -13,27 +13,24 @@ set_n_least_used_CUDA_VISIBLE_DEVICES() {
     echo "CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES"
 }
 
-set_n_least_used_CUDA_VISIBLE_DEVICES 1
+set_n_least_used_CUDA_VISIBLE_DEVICES 2
 
-# single GPU, deberta
-python train_reward_model.py --pretrain 'microsoft/deberta-v3-large' \
-                             --model 'deberta' \
-                             --strategy naive \
-                             --loss_fn 'log_exp'\
-                             --save_path 'rmstatic.pt' \
-                             --test False
+torchrun --standalone --nproc_per_node=2 train_reward_model.py \
+   --pretrain 'microsoft/deberta-v3-large' \
+   --model 'deberta' \
+   --strategy colossalai_zero2 \
+   --loss_fn 'log_sig'\
+   --dataset 'Anthropic/hh-rlhf'\
+   --batch_size 4\
+#    --dataset 'Dahoas/rm-static'\
+#    --save_path <your model saving path>\
 
-# torchrun --standalone --nproc_per_node=1 train_reward_model.py --pretrain 'microsoft/deberta-v3-large' \
-#                              --model 'deberta' \
-#                              --strategy colossalai_gemini \
-#                              --loss_fn 'log_exp'\
-#                              --save_path 'rmstatic.pt' \
-#                              --test True
-
-# multiple GPU
-# torchrun --standalone --nproc_per_node=4 train_reward_model.py --pretrain 'bigscience/bloomz-7b1' \
-#                              --model 'bloom' \
-#                              --strategy collosalai_zero2 \
-#                              --loss_fn 'log_exp'\
-#                              --save_path 'rmstatic.pt' \
-#                              --test False
+# torchrun --standalone --nproc_per_node=2 train_reward_model.py \
+#    --pretrain 'bigscience/bloomz-7b1' \
+#    --model 'bloom' \
+#    --strategy colossalai_zero2 \
+#    --loss_fn 'log_sig'\
+#    --dataset 'Anthropic/hh-rlhf'\
+# #    --dataset 'Dahoas/rm-static'\
+# #    --save_path <your model saving path>\
+   
