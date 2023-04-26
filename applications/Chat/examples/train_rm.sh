@@ -33,4 +33,3 @@ torchrun --standalone --nproc_per_node=2 train_reward_model.py \
 #    --dataset 'Anthropic/hh-rlhf'\
 # #    --dataset 'Dahoas/rm-static'\
 # #    --save_path <your model saving path>\
-   
